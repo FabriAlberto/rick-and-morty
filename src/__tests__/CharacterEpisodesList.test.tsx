@@ -24,7 +24,7 @@ jest.mock("../services/api.service.ts", () => ({
 }));
 const mockedApi = api as jest.Mocked<typeof api>;
 
-describe("CharacterEpisodes", () => {
+describe("CharacterEpisodesList", () => {
   it("should display a message asking to select two characters if one or both character IDs are missing", () => {
     const { container } = render(
       <CharacterEpisodesList
