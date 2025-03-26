@@ -1,4 +1,4 @@
-import { ResponseRamApi } from "@/types/rickMorty.types";
+import { Character, Episode, ResponseRamApi } from "@/types/rickMorty.types";
 import axios from "axios";
 import { URLS } from "./apiUrls.service";
 
@@ -11,10 +11,10 @@ function createApiClient() {
 }
 
 export const api = {
-  async getCharacters() {
+  async getCharacters(query?: string) {
     try {
       const { data } = await createApiClient().get<ResponseRamApi>(
-        URLS.rickAndMortyUrl("/character")
+        URLS.rickAndMortyUrl(`/character?${query}`)
       );
       if (data) return data;
       throw new Error("No characters found");
@@ -22,5 +22,29 @@ export const api = {
       console.error("error fetching characters", error);
       return null;
     }
-  }
+  },
+  async getMultipleCharacters(ids: string[]) {
+    try {
+      const { data } = await createApiClient().get<Character[]>(
+        URLS.rickAndMortyUrl(`/character/${ids.join(",")}`)
+      );
+      if (data) return data;
+      throw new Error("No characters found");
+    } catch (error) {
+      console.error("error fetching characters", error);
+      return null;
+    }
+  },
+  async getMultipleEpisodes(ids: string[]) {
+    try {
+      const { data } = await createApiClient().get<Episode[]>(
+        URLS.rickAndMortyUrl(`/episode/[${ids.join()}]`)
+      );
+      if (data) return data;
+      throw new Error("No episodes found");
+    } catch (error) {
+      console.error("error fetching episodes", error);
+      return null;
+    }
+  },
 };
