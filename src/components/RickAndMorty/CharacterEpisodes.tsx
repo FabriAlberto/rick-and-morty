@@ -1,21 +1,13 @@
-import React, { FC } from "react";
+"use client";
+import React from "react";
 import CharacterEpisodesList from "./CharacterEpisodesList";
-import { api } from "@/services/api.service";
-type Props = {
-  character1Id?: string;
-  character2Id?: string;
-};
-const CharacterEpisodes: FC<Props> = async ({ character1Id, character2Id }) => {
-  const characters =
-    character1Id && character2Id
-      ? await api.getMultipleCharacters([character1Id, character2Id])
-      : [];
-  const character1 = characters?.find(
-    (character) => character.id === Number(character1Id)
-  );
-  const character2 = characters?.find(
-    (character) => character.id === Number(character2Id)
-  );
+import { useRamContext } from "@/context/rickAndMortyContext/ramContext";
+
+const CharacterEpisodes = () => {
+  const {
+    charactersSelected: { character1, character2 },
+  } = useRamContext();
+
   const episodesCharacter1 = character1?.episode || [];
   const episodesCharacter2 = character2?.episode || [];
 
@@ -34,17 +26,17 @@ const CharacterEpisodes: FC<Props> = async ({ character1Id, character2Id }) => {
   };
 
   return (
-    <>
-      <section id="1" className="w-4/12 p-2">
+    <div className="flex flex-wrap">
+      <section className=" w-full md:w-4/12 p-2">
         <CharacterEpisodesList
           episodesIds={onlyCharacter1.map((episode) => getEpisodeId(episode))}
           title="Character #1 - Only Episodes"
           avatars={character1 ? [character1?.image] : []}
-          isCharactersSelected={!!character1Id && !!character2Id}
+          isCharactersSelected={!!character1 && !!character2}
         />
       </section>
 
-      <section id="1and2" className="w-4/12 p-2">
+      <section className=" w-full md:w-4/12 p-2">
         <CharacterEpisodesList
           episodesIds={sharedEpisodes.map((episode) => getEpisodeId(episode))}
           title="Character #1 & #2 - Shared Episodes"
@@ -53,19 +45,19 @@ const CharacterEpisodes: FC<Props> = async ({ character1Id, character2Id }) => {
               ? [character1?.image, character2?.image]
               : []
           }
-          isCharactersSelected={!!character1Id && !!character2Id}
+          isCharactersSelected={!!character1 && !!character2}
         />
       </section>
 
-      <section id="2" className="w-4/12 p-2">
+      <section className=" w-full md:w-4/12 p-2">
         <CharacterEpisodesList
           episodesIds={onlyCharacter2.map((episode) => getEpisodeId(episode))}
           title="Character #2 - Only Episodes"
           avatars={character2 ? [character2?.image] : []}
-          isCharactersSelected={!!character1Id && !!character2Id}
+          isCharactersSelected={!!character1 && !!character2}
         />
       </section>
-    </>
+    </div>
   );
 };
 

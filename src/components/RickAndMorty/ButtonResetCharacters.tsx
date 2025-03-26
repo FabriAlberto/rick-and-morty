@@ -1,26 +1,20 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRamContext } from "@/context/rickAndMortyContext/ramContext";
+import { Sections } from "@/types/rickMorty.types";
 import React, { FC } from "react";
-type Props={
-  paramName: string;
-}
+type Props = {
+  sectionName: Sections;
+};
 
-const ButtonResetCharacters: FC<Props> = ({paramName}) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const character= searchParams.get(paramName) || null;
+const ButtonResetCharacters: FC<Props> = ({ sectionName }) => {
+  const { charactersSelected, resetSelection } = useRamContext();
+  const characterSelected = charactersSelected[sectionName];
+  if (!characterSelected) return null;
 
-  if (!character) return null;
-  const onClick = () => {
-    const params = new URLSearchParams(window.location.search);
-    params.delete(paramName);
-    router.replace(`${pathname}?${params.toString()}`);
-  }
   return (
     <button
       className="btn btn-error p-2 cursor-pointer rounded-md border-1 border-red-500 text-red-500"
-      onClick={onClick}
+      onClick={()=>resetSelection(sectionName)}
     >
       <p className="text-sm">Remove selection ❌</p>
     </button>

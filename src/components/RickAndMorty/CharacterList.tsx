@@ -1,19 +1,19 @@
 "use client";
-import { ResponseRamApi } from "@/types/rickMorty.types";
+import { ResponseRamApi, Sections } from "@/types/rickMorty.types";
 import { Pagination } from "antd";
 import React from "react";
 import CharacterCard from "./CharacterCard";
 import { usePathname, useRouter } from "next/navigation";
 type Props = {
   charactersResponse: ResponseRamApi | null;
-  paramName: string;
+  sectionName: Sections
   currentPage: number;
   sectionNumber: number;
   allSections: number[];
 };
 const CharacterList: React.FC<Props> = ({
   charactersResponse,
-  paramName,
+  sectionName,
   currentPage,
   sectionNumber,
   allSections,
@@ -25,21 +25,19 @@ const CharacterList: React.FC<Props> = ({
     params.set(`page${sectionNumber}`, String(page));
     router.replace(`${pathname}?${params.toString()}`);
   };
-  
+
   return (
     <>
       <section className="w-full flex mt-2  flex-wrap rounded-md max-h-[70vh] overflow-auto">
         {charactersResponse?.results?.map((character) => (
           <div className=" w-full sm:w-6/12 md:w-4/12 p-2" key={character.id}>
             <CharacterCard
-              id={character.id}
               key={character.id}
-              image={character.image}
-              name={character.name}
-              paramName={paramName}
-              otherSections={allSections.filter((section) => section !== sectionNumber)}
-              status={character.status}
-              specie={character.species}
+              character={character}
+              sectionName={sectionName}
+              otherSections={allSections.filter(
+                (section) => section !== sectionNumber
+              )}
             />
           </div>
         ))}

@@ -25,26 +25,26 @@ jest.mock("../services/api.service.ts", () => ({
 const mockedApi = api as jest.Mocked<typeof api>;
 
 describe("CharacterEpisodes", () => {
-  it("should display a message asking to select two characters if one or both character IDs are missing", async () => {
+  it("should display a message asking to select two characters if one or both character IDs are missing", () => {
     const { container } = render(
-      await CharacterEpisodesList({
-        episodesIds: [],
-        title: "test",
-        isCharactersSelected: false,
-      })
+      <CharacterEpisodesList
+        episodesIds={[]}
+        title="test"
+        isCharactersSelected={false}
+      />
     );
     expect(container.textContent).toContain(
       "Select two characters to see their episodes"
     );
   });
 
-  it("should not display the message if isCharactersSelected=true", async () => {
+  it("should not display the message if isCharactersSelected=true", () => {
     const { queryByText } = render(
-      await CharacterEpisodesList({
-        isCharactersSelected: true,
-        title: "Character #1 - Only Episodes",
-        episodesIds: ["1", "2"],
-      })
+      <CharacterEpisodesList
+        episodesIds={["1", "2"]}
+        title="Character #1 - Only Episodes"
+        isCharactersSelected
+      />
     );
 
     expect(
@@ -52,15 +52,15 @@ describe("CharacterEpisodes", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("it should display a message that no episodes were found if the api responds with an empty array. ", async () => {
+  it("it should display a message that no episodes were found if the api responds with an empty array. ", () => {
     mockedApi.getMultipleEpisodes.mockResolvedValueOnce([]);
 
     const { container } = render(
-      await CharacterEpisodesList({
-        isCharactersSelected: true,
-        title: "Character #1 - Only Episodes",
-        episodesIds: ["1", "2"],
-      })
+      <CharacterEpisodesList
+        episodesIds={["1", "2"]}
+        title="Character #1 - Only Episodes"
+        isCharactersSelected={true}
+      />
     );
     expect(container.textContent).toContain("No episodes found");
   });

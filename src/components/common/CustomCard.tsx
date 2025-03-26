@@ -2,6 +2,8 @@
 import React, { FC, ReactNode, useState } from "react";
 import { motion } from "framer-motion";
 import { Avatar } from "antd";
+import useIsMobile from "@/hooks/useIsMobile";
+
 type Props = {
   image: ReactNode;
   title: string;
@@ -20,7 +22,7 @@ const CustomCard: FC<Props> = ({
   onClick,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-
+  const isMobile = useIsMobile();
   return (
     <motion.article
       className={`relative  ${className} rounded-lg ${
@@ -33,18 +35,20 @@ const CustomCard: FC<Props> = ({
       {image}
       <motion.div
         animate={
-          isHovered && !disabled
+          isMobile
+            ? undefined
+            : isHovered && !disabled
             ? { height: "100%", borderRadius: "10px" }
             : { height: "50px" }
         }
         transition={{ duration: 0.3, delay: 0.4 }}
-        className=" pl-3 mt-4 absolute group rounded-b-lg overflow-hidden z-10 bottom-0  border-zinc-500 h-[50px] bg-black/40 backdrop-blur-sm   w-full"
+        className=" pl-3 mt-4  sm:absolute group rounded-b-lg overflow-hidden z-10 bottom-0  border-zinc-500 h-[150px] sm:h-[50px] bg-black/40 backdrop-blur-sm   w-full"
       >
         <div className="flex items-center">
           <motion.div
             transition={{ delay: 0.5 }}
             animate={
-              isHovered && !disabled
+              (isHovered && !disabled) || isMobile
                 ? {
                     width: 40,
                     opacity: 1,
@@ -61,7 +65,11 @@ const CustomCard: FC<Props> = ({
         </div>
 
         <motion.div
-          animate={isHovered && !disabled ? { opacity: 1 } : { opacity: 0 }}
+          animate={
+            (isHovered && !disabled) || isMobile
+              ? { opacity: 1 }
+              : { opacity: 0 }
+          }
           transition={{ delay: 0.5 }}
         >
           {content}

@@ -38,3 +38,4 @@ export type Episode = {
   url: string;
   created: string;
 };
+export type Sections="character1" | "character2"

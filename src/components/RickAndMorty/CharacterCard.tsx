@@ -2,55 +2,45 @@
 import Image from "next/image";
 import React, { FC } from "react";
 import CustomCard from "../common/CustomCard";
-import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Specie, Status } from "@/utils/enums";
+import { useRamContext } from "../../context/rickAndMortyContext/ramContext";
+import { Character, Sections } from "@/types/rickMorty.types";
 
 type Props = {
-  name: string;
-  id: number;
-  image: string;
-  paramName: string;
+  character: Character;
+  sectionName: Sections;
   otherSections: number[];
-  status: string;
-  specie: string;
 };
 
 const CharacterCard: FC<Props> = ({
-  id,
-  image,
-  name,
-  paramName,
+  character,
+  sectionName,
   otherSections,
-  status,
-  specie,
 }) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const cardSelectedSection = searchParams.get(paramName) || null;
-  const isSelected = cardSelectedSection === String(id);
+  const { selectCharacter, charactersSelected } = useRamContext();
+  const { id, image, name, status, species } = character;
 
-  const onSelectCharacter = () => {
-    const params = new URLSearchParams(searchParams.toString());
+  const cardSelectedSection = charactersSelected[sectionName]?.id || null;
+  const isSelected = cardSelectedSection === id;
 
-    if (cardSelectedSection === String(id)) {
-      params.delete(paramName);
-    } else {
-      params.set(paramName, String(id));
-    }
-    router.replace(`?${params.toString()}`, { scroll: false });
-  };
-
-  const cardsSelecteds: string[] = [];
+  const cardsSelecteds: number[] = [];
   otherSections.forEach((section) => {
-    const cardSelectedSection = searchParams.get(`character${section}`) || null;
+    const cardSelectedSection =
+      charactersSelected[
+        `character${section}` as keyof typeof charactersSelected
+      ]?.id;
     if (cardSelectedSection) cardsSelecteds.push(cardSelectedSection);
   });
-  const cardIsAlreadySelected = cardsSelecteds.includes(String(id));
+  const cardIsAlreadySelected = cardsSelecteds.includes(id);
 
   return (
     <CustomCard
-      onClick={!cardIsAlreadySelected ? onSelectCharacter : undefined}
+      onClick={
+        !cardIsAlreadySelected
+          ? () => selectCharacter(character, sectionName)
+          : undefined
+      }
       image={
         <Image
           width={300}
@@ -62,7 +52,7 @@ const CharacterCard: FC<Props> = ({
         />
       }
       disabled={cardIsAlreadySelected}
-      title={`${name} ${isSelected && "✅"}`}
+      title={`${name} ${isSelected ? "✅" : ""}`}
       className={`${!cardIsAlreadySelected && "cursor-pointer"} ${
         isSelected ? "border-3 border-[#C076FF] saturate-150" : "border-none"
       }`}
@@ -73,7 +63,7 @@ const CharacterCard: FC<Props> = ({
             {status}
           </motion.p>
           <motion.p className="text-white">
-            Specie: {Specie[specie as keyof typeof Specie]} {specie}
+            Specie: {Specie[species as keyof typeof Specie]} {species}
           </motion.p>
         </>
       }

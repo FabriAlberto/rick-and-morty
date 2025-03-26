@@ -1,4 +1,5 @@
-import { ResponseRamApi } from "@/types/rickMorty.types";
+export const dynamic = "force-dynamic";
+import { ResponseRamApi, Sections } from "@/types/rickMorty.types";
 import React from "react";
 
 import { api } from "@/services/api.service";
@@ -26,7 +27,7 @@ export default async function CharacterListContainer({
   const params = new URLSearchParams();
   params.set("page", page.toString());
   const charactersResponse = await fetchCharacters(params.toString());
-  const paramName = `character${sectionNumber}`;
+  const sectionName = `character${sectionNumber}` as Sections;
 
   return (
     <section className="p-4 ">
@@ -41,12 +42,12 @@ export default async function CharacterListContainer({
         >
           Character #{sectionNumber}
         </span>
-        <ButtonResetCharacters paramName={paramName} />
+        <ButtonResetCharacters sectionName={sectionName} />
       </div>
 
       <CharacterList
         charactersResponse={charactersResponse}
-        paramName={paramName}
+        sectionName={sectionName}
         sectionNumber={sectionNumber}
         currentPage={page}
         allSections={allSections}
